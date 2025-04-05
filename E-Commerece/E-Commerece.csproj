@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Infrastructure\presentation\presentation.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwRoot\Images\Products\" />
+  </ItemGroup>
+
 </Project>

@@ -1,18 +1,27 @@
 
+using Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
+using persistence;
 using persistence.Data;
+using persistence.Repositories;
+using Services;
+using Services.Abstractions;
 
 namespace E_Commerece
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
 
-			builder.Services.AddControllers();
+			builder.Services.AddControllers().AddApplicationPart(typeof(presentation.AssemplyReference).Assembly);
+			builder.Services.AddScoped<IDbInitializer,DbInitializer>();
+			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+			builder.Services.AddScoped<IServicesManger, ServicesManger>();
+			builder.Services.AddAutoMapper(typeof(Services.AssemplyReference).Assembly);
 			builder.Services.AddDbContext<StoreContext>(options =>
 			{
 				options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -23,12 +32,15 @@ namespace E_Commerece
 
 			var app = builder.Build();
 
+			await InitializeDbAsync(app);
+
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+			app.UseStaticFiles();
 
 			app.UseHttpsRedirection();
 
@@ -38,6 +50,13 @@ namespace E_Commerece
 			app.MapControllers();
 
 			app.Run();
+
+			async Task InitializeDbAsync(WebApplication app)
+			{
+				using var scope = app.Services.CreateScope();
+				var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+				await dbInitializer.InitializeAsync();
+			}
 		}
 	}
 }
