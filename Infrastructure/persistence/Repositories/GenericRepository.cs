@@ -44,5 +44,19 @@ namespace persistence.Repositories
 		{
 			_storeContext.Set<TEntity>().Update(entity);
 		}
+		#region For Specification
+		public async Task<IEnumerable<TEntity>> GetAllWithSpecificationAsync(Specifications<TEntity> specifications)
+		=> await ApplySpecification(specifications).ToListAsync();
+		
+		public async Task<TEntity?> GetByIdWithSpecificationAsync(Specifications<TEntity> specifications)
+		=> await ApplySpecification(specifications).FirstOrDefaultAsync();
+
+		private IQueryable<TEntity> ApplySpecification(Specifications<TEntity> specifications)
+		=> SpecificationEvaluator.GetQuery<TEntity>(_storeContext.Set<TEntity>(), specifications);
+
+		#endregion
+		public async Task<int> CountAsync(Specifications<TEntity?> specifications)
+        => await SpecificationEvaluator.GetQuery(_storeContext.Set<TEntity>(), specifications).CountAsync();
+
 	}
 }

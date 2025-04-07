@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
+using Services.Specifications;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,15 @@ namespace Services
 			return brandsResult;
 		}
 
-		public async Task<IEnumerable<ProductResultDTO>> GetAllProductsAsync()
+		public async Task<PaginatedResult<ProductResultDTO>> GetAllProductsAsync(ProductSpecificationParameters parameters)
 		{
-			var products = await unitOfWork.GetRepository<Product, int>().GetAllAsync();
+			var products = await unitOfWork.GetRepository<Product, int>().GetAllWithSpecificationAsync(new ProductWithBrandAndTypeSpecifications( parameters));
 			var productsResult = mapper.Map<IEnumerable<ProductResultDTO>>(products);
-			return productsResult;
+			var count = productsResult.Count();
+			var totalCount = await unitOfWork.GetRepository<Product,int>()
+				.CountAsync(new ProductCountSpecifications( parameters));
+			var result = new PaginatedResult<ProductResultDTO>(parameters.PageIndex,count,count,productsResult);
+			return result;
 		}
 
 		public async Task<IEnumerable<TypeResultDTO>> GetAllTypesAsync()
@@ -36,7 +41,7 @@ namespace Services
 
 		public async Task<ProductResultDTO?> GetProductByIdAsync(int id)
 		{
-			var product = await unitOfWork.GetRepository<Product, int>().GetAsync(id);
+			var product = await unitOfWork.GetRepository<Product, int>().GetByIdWithSpecificationAsync(new ProductWithBrandAndTypeSpecifications(id));
 			var productResult = mapper.Map<ProductResultDTO>(product);
 			return productResult;
 		}
