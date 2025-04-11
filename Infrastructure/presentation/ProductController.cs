@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
+using Shared.ErrorModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,6 +40,10 @@ namespace presentation
 		}
 		#endregion
 		#region Get Product By Id
+		[ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
+		[ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.InternalServerError)]
+		[ProducesResponseType(typeof(ValidationErrorResponce), (int)HttpStatusCode.BadRequest)]
+		[ProducesResponseType(typeof(ProductResultDTO), (int)HttpStatusCode.OK)]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<IEnumerable<ProductResultDTO>>> GetProductById(int id)
 		{

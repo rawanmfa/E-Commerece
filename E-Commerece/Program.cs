@@ -1,5 +1,9 @@
 
 using Domain.Contracts;
+using E_Commerece.Extensions;
+using E_Commerece.Factories;
+using E_Commerece.MiddleWare;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using persistence;
 using persistence.Data;
@@ -17,22 +21,14 @@ namespace E_Commerece
 
 			// Add services to the container.
 
-			builder.Services.AddControllers().AddApplicationPart(typeof(presentation.AssemplyReference).Assembly);
-			builder.Services.AddScoped<IDbInitializer,DbInitializer>();
-			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
-			builder.Services.AddScoped<IServicesManger, ServicesManger>();
-			builder.Services.AddAutoMapper(typeof(Services.AssemplyReference).Assembly);
-			builder.Services.AddDbContext<StoreContext>(options =>
-			{
-				options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-			});
+			builder.Services.AddInfraStructureSevice(builder.Configuration);
+			builder.Services.AddCoreServices();
+			builder.Services.AddPresentaionServices();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
 
 			var app = builder.Build();
-
-			await InitializeDbAsync(app);
+			await app.SeedDataBaseAsync();
+			app.UseMiddleware<GlobalErrorHandlingMiddleWare>();
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
@@ -51,12 +47,6 @@ namespace E_Commerece
 
 			app.Run();
 
-			async Task InitializeDbAsync(WebApplication app)
-			{
-				using var scope = app.Services.CreateScope();
-				var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-				await dbInitializer.InitializeAsync();
-			}
 		}
 	}
 }
