@@ -22,7 +22,7 @@ namespace E_Commerece
 			// Add services to the container.
 
 			builder.Services.AddInfraStructureSevice(builder.Configuration);
-			builder.Services.AddCoreServices();
+			builder.Services.AddCoreServices(builder.Configuration);
 			builder.Services.AddPresentaionServices();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -39,6 +39,7 @@ namespace E_Commerece
 			app.UseStaticFiles();
 
 			app.UseHttpsRedirection();
+			app.UseAuthentication();
 
 			app.UseAuthorization();
 
