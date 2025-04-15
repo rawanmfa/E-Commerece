@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
 using Shared.ErrorModels;
@@ -12,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace presentation
 {
-	[Authorize(Roles ="Admin")]
-	public class ProductController(IServicesManger ServicesManger) : ApiController
+	[ApiController]
+	[Route("api/[controller]")]
+	public class ProductController(IServicesManger ServicesManger) : ControllerBase
 	{
 		#region Get All Product
 		[HttpGet("Products")]
@@ -40,6 +40,10 @@ namespace presentation
 		}
 		#endregion
 		#region Get Product By Id
+		[ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
+		[ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.InternalServerError)]
+		[ProducesResponseType(typeof(ValidationErrorResponce), (int)HttpStatusCode.BadRequest)]
+		[ProducesResponseType(typeof(ProductResultDTO), (int)HttpStatusCode.OK)]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<IEnumerable<ProductResultDTO>>> GetProductById(int id)
 		{

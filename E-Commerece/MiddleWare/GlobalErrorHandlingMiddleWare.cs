@@ -43,29 +43,17 @@ namespace E_Commerece.MiddleWare
 		{
 			httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 			httpContext.Response.ContentType = "application/json";
-			var response = new ErrorDetails
-			{
-				ErrorMessage = exception.Message,
-			};
 			httpContext.Response.StatusCode = exception switch
 			{
 				NotFoundException => (int)HttpStatusCode.NotFound,
-				UnAuthorisedException=>(int)HttpStatusCode.Unauthorized,
-				ValidationException validationException=> HandleValidationExcepthion(validationException,response),
-				_ => (int)HttpStatusCode.InternalServerError
+				_=> (int)HttpStatusCode.InternalServerError
 			};
-			response.StatusCode = httpContext.Response.StatusCode;
-			//var response = new ErrorDetails
-			//{
-			//	StatusCode = httpContext.Response.StatusCode,
-			//	ErrorMessage = exception.Message
-			//}.ToString();
-			await httpContext.Response.WriteAsync(response.ToString());
-		}
-		private int HandleValidationExcepthion(ValidationException validationException,ErrorDetails response)
-		{
-			response.Errors = validationException.Errors;
-			return (int) HttpStatusCode.BadRequest;
+			var response = new ErrorDetails
+			{
+				StatusCode = httpContext.Response.StatusCode,
+				ErrorMessage = exception.Message
+			}.ToString();
+			await httpContext.Response.WriteAsync(response);
 		}
 	}
 }

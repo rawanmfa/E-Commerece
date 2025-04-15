@@ -1,6 +1,5 @@
 ﻿using Domain.Contracts;
 using Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using persistence.Data;
 using System;
@@ -15,14 +14,10 @@ namespace persistence
 	public class DbInitializer : IDbInitializer
 	{
 		private readonly StoreContext _storeContext;
-		private readonly RoleManager<IdentityRole> _roleManager;
-		private readonly UserManager<User> _userManager;
 
-		public DbInitializer(StoreContext storeContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+		public DbInitializer(StoreContext storeContext)
 		{
 			_storeContext = storeContext;
-			_roleManager = roleManager;
-			_userManager = userManager;
 		}
 
 		public async Task InitializeAsync()
@@ -66,36 +61,6 @@ namespace persistence
 			}
 			catch (Exception) 
 			{ throw; }
-		}
-
-		public async Task InitializeIdentityAsync()
-		{
-            if (!_roleManager.Roles.Any())
-            {
-				await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
-				await _roleManager.CreateAsync(new IdentityRole("Admin"));
-			}
-            if (! _userManager.Users.Any())
-            {
-				var SuperAdminUser = new User
-				{
-					DisplayName = "SuperAdmin",
-					Email = "SuperAdminUser@gmail.com",
-					UserName = "SuperAdminUser",
-					PhoneNumber = "0113456789",
-				};
-				var AdminUser = new User
-				{
-					DisplayName = "Admin",
-					Email = "AdminUser@gmail.com",
-					UserName = "AdminUser",
-					PhoneNumber = "0123456789",
-				};
-				await _userManager.CreateAsync(SuperAdminUser,"Passw0rd"); // password
-				await _userManager.CreateAsync(AdminUser, "Passw0rd");
-				await _userManager.AddToRoleAsync(SuperAdminUser, "SuperAdmin");
-				await _userManager.AddToRoleAsync(AdminUser, "Admin");
-			}
 		}
 	}
 }
