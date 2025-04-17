@@ -63,6 +63,16 @@ namespace persistence
 						await _storeContext.SaveChangesAsync();
 					}
 				}
+				if (!_storeContext.DeliveryMethods.Any())
+				{
+					var DeliverMethodsData = await File.ReadAllTextAsync(@"..\Infrastructure\persistence\Data\Seeding\delivery.json");
+					var deliveries = JsonSerializer.Deserialize<List<DeliveryMethod>>(DeliverMethodsData);
+					if (deliveries is not null && deliveries.Any())
+					{
+						await _storeContext.DeliveryMethods.AddRangeAsync(deliveries);
+						await _storeContext.SaveChangesAsync();
+					}
+				}
 			}
 			catch (Exception)
 			{ throw; }

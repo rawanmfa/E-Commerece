@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
 {
-	public class OrderNotFoundException(int Id):NotFoundException($"no order with id {Id} was found")
+	public class OrderNotFoundException(Guid Id):NotFoundException($"no order with id {Id} was found")
 	{
 	}
 }

@@ -8,6 +8,7 @@ namespace Shared
 {
 	public record OrderResultDto
 	{
+		public Guid Id { get; init; }
 		public string UserEmail { get; init; }
 		public ShippingAddressDto ShippingAddress { get; init; }
 		public ICollection<OrderItemDto> OrderItems { get; init; } = new List<OrderItemDto>();

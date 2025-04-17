@@ -17,7 +17,6 @@ namespace Domain.Entities
 			DeliveryMethod = _deliveryMethod;
 			SubTotal = _subTotal;
 		}
-		public Guid Id { get; set; }
 		public string UserEmail { get; set; }
 		public ShippingAddress ShippingAddress { get; set; }
 		public ICollection<OrderItem> OrderItems { get; set; }
