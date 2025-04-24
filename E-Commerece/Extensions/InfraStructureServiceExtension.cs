@@ -21,6 +21,7 @@ namespace E_Commerece.Extensions
 			Services.AddScoped<IDbInitializer, DbInitializer>();
 			Services.AddScoped<IUnitOfWork, UnitOfWork>();
 			Services.AddScoped<IBasketRepository, BasketRepository>();
+			Services.AddScoped<ICashRepository, CashRepository>();
 			Services.AddDbContext<StoreContext>(options =>
 			{
 				options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));

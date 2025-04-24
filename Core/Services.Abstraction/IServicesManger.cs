@@ -12,5 +12,6 @@ namespace Services.Abstractions
 		public IBasketService BasketService { get; }
 		public IAuthenticationService AuthenticationService { get; }
 		public IOrderService OrderService { get; }
+		public ICashService CashService { get; }
 	}
 }
